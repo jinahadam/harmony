@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="383.485" Width="738.046">
     <Grid>
-        <Button Content="Calibrate " HorizontalAlignment="Left" Margin="25,23,0,0" VerticalAlignment="Top" Width="187" Click="Button_Click" Height="39"/>
-        <Label x:Name="calibrationLabel" Content="Calibration Info&#xA;" HorizontalAlignment="Left" Margin="228,23,0,0" VerticalAlignment="Top" Height="39" Width="591" RenderTransformOrigin="0.5,0.5" FontSize="20">
+        <Button Content="Calibrate " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="192" Click="Button_Click" Height="39"/>
+        <Label x:Name="displayLabel" Content="" HorizontalAlignment="Center" Margin="12,62,11,0" VerticalAlignment="Top" Height="39" Width="707" RenderTransformOrigin="0.5,0.5" FontSize="20">
             <Label.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -14,6 +14,12 @@
                 </TransformGroup>
             </Label.RenderTransform>
         </Label>
+
+        <Rectangle Fill="#FFBAC5BA" HorizontalAlignment="Left" Height="214" Margin="10,112,0,0" VerticalAlignment="Top" Width="704"
+                    MouseMove="ellipse_MouseMove"
+             AllowDrop="True" Drop="ellipse_Drop"/>
+        <Button Content="Upload .BIN file" HorizontalAlignment="Left" Margin="531,10,0,0" VerticalAlignment="Top" Width="183" Height="39" Click="Button_Click_1"/>
+
 
     </Grid>
 </Window>
