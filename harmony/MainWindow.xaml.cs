@@ -43,6 +43,22 @@ namespace harmony
             public byte[] labels;
         }
 
+
+        
+        public struct GPS_LINE
+        {
+            public DateTime datetime;
+            public string type;
+            public float lat;
+            public float lon;
+            public float alt;
+
+            public float roll;
+            public float pitch;
+            public float yaw;
+        }
+
+
         static Dictionary<string, log_Format> logformat = new Dictionary<string, log_Format>();
 
 
@@ -166,10 +182,10 @@ namespace harmony
 
         private void ellipse_Drop(object sender, System.Windows.DragEventArgs e)
         {
-            foreach (String item in (String[])e.Data.GetData((System.Windows.DataFormats.FileDrop)))
-            {
-                Console.WriteLine(System.IO.Path.GetFullPath(item));
-            }
+           // foreach (String item in (String[])e.Data.GetData((System.Windows.DataFormats.FileDrop)))
+           // {
+           //     Console.WriteLine(System.IO.Path.GetFullPath(item));
+           // }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -184,7 +200,7 @@ namespace harmony
             if (File.Exists(ofd.FileName))
             {
 
-                List<string> lines = new List<string>();
+                List<GPS_LINE> lines = new List<GPS_LINE>();
 
                 using (BinaryReader br = new BinaryReader(File.OpenRead(ofd.FileName)))
                 {
@@ -219,10 +235,12 @@ namespace harmony
                                 try
                                 {
                                     string line = logEntry(data, br);
-
-
-                                    Console.WriteLine(line);
-                                    lines.Add(line);
+                                    var processed_line = processLine(line);
+                                    if (processed_line.type == "GPS" || processed_line.type == "ATT")
+                                    {
+                                        lines.Add(processed_line);
+                                    }
+                                   
                                 }
                                 catch { Console.WriteLine("Bad Binary log line {0}", data); }
                                 break;
@@ -230,12 +248,115 @@ namespace harmony
                     }
                 }
 
+              //  Console.WriteLine("lines?? {0}", lines.Count());
+
+              //  foreach (var item in lines)
+              //      Console.WriteLine("{0}", item.type);
+
+                List<GPS_LINE> d = combineGPSandATT(lines);
+
+               // Console.WriteLine("lines?? {0}", d.Count());
+               //   foreach (var item in d)
+                //      Console.WriteLine("{0} {1} {2} {3}", item.datetime.ToString("MM/dd/yyyy HH:mm:ss"), item.lat, item.lon, item.yaw);
+
+                Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Valid GPS file {0} cordinates",d.Count()) ));
+
+
             }
 
-            
+
+          
+
 
         }
 
+        private List<GPS_LINE> combineGPSandATT(List<GPS_LINE> lines)
+        {
+            List<GPS_LINE> result = new List<GPS_LINE>();
+            var temp = new GPS_LINE();
+            foreach (var item in lines)
+            {
+                if (item.type == "GPS")
+                {
+                    temp.datetime = item.datetime;
+                    temp.lat = item.lat;
+                    temp.lon = item.lon;
+                    temp.alt = item.alt;
+                }
+
+                if (item.type == "ATT")
+                {
+                    if (temp.lat != 0 && temp.lon != 0)
+                    {
+                        temp.roll = item.roll;
+                        temp.pitch = item.pitch;
+                        temp.yaw = item.yaw;
+                        result.Add(temp);
+                    }
+                }
+            }
+
+            return result;
+
+        } //end uplaod function
+
+
+        private GPS_LINE processLine(String line)
+        {
+            GPS_LINE gps_line = new GPS_LINE();
+            string[] items = line.Split(',', ':');
+            if (items[0].Contains("GPS"))
+            {
+                var gps_time = items[2];
+                var gps_week = items[3];
+                var lat = items[6];
+                var lon = items[7];
+                var alt = items[9];
+
+                gps_line.datetime = DateTimeFromGPSTimeandGPSWeek(gps_time, gps_week);
+                gps_line.lat = float.Parse(lat);
+                gps_line.lon = float.Parse(lon);
+                gps_line.alt = float.Parse(alt);
+                gps_line.type = "GPS";
+
+
+                //Console.WriteLine("time: {0} {1} {2} {3}",DateTimeFromGPSTimeandGPSWeek(gps_time, gps_week), lat, lon, alt );
+               // foreach (var item in items)
+               //     Console.Write(item);
+            }
+            else if (items[0].Contains("ATT"))
+            {
+                var roll = items[3];
+                var pitch = items[5];
+                var yaw = items[7];
+                gps_line.type = "ATT";
+
+                gps_line.roll = float.Parse(roll);
+                gps_line.pitch = float.Parse(pitch);
+                gps_line.yaw = float.Parse(yaw);
+
+               // Console.WriteLine("{0} {1} {2}", roll, pitch, yaw);
+
+                // foreach (var item in items)
+                //      Console.Write(item);
+            }
+
+            return gps_line;
+            
+        }
+
+        private DateTime DateTimeFromGPSTimeandGPSWeek(String gpstime, String gpsweek)
+        {
+            DateTime gpsweekstart = DateTime.Parse("06 January 1980");
+            int days = int.Parse(gpsweek) * 7;
+            var dt =  gpsweekstart.AddDays(days).AddSeconds(double.Parse(gpstime) / 1000).ToString();
+            //converts to localtime from UTC
+            DateTime convertedDate = DateTime.Parse(dt);
+            return TimeZone.CurrentTimeZone.ToLocalTime(convertedDate);
+               
+
+
+        }
 
 
 

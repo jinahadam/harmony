@@ -27,3 +27,4 @@
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\harmony.application
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\harmony.exe
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\harmony.pdb
+\\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\harmony.csprojResolveAssemblyReference.cache

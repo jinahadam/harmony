@@ -4,7 +4,7 @@
         Title="MainWindow" Height="383.485" Width="738.046">
     <Grid>
         <Button Content="Calibrate " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="192" Click="Button_Click" Height="39"/>
-        <Label x:Name="displayLabel" Content="" HorizontalAlignment="Center" Margin="12,62,11,0" VerticalAlignment="Top" Height="39" Width="707" RenderTransformOrigin="0.5,0.5" FontSize="20">
+        <Label x:Name="displayLabel" Content="" Margin="12,62,11,0" VerticalAlignment="Top" Height="39" Width="707" RenderTransformOrigin="0.5,0.5" FontSize="20">
             <Label.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
