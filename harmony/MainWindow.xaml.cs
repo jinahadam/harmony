@@ -18,6 +18,7 @@ using System.Reflection;
 using System.IO;
 using uint8_t = System.Byte;
 using System.Runtime.InteropServices;
+using ExifLib;
 
 
 namespace harmony
@@ -84,26 +85,7 @@ namespace harmony
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
-            calibrate();
-            Console.WriteLine("Being BIN");
-            // var temp1 = MissionPlanner.Log.BinaryLog.ReadLog("126.BIN");
-
-            // Console.WriteLine("temp1 {0}", temp1.Count);
-            // delete binary log file
-            //File.Delete(logfile);
-
-            //logfile = logfile + ".log";
-
-            // write assci log
-            //using (StreamWriter sw = new StreamWriter(logfile))
-            //{
-            // foreach (string line in temp1)
-            // {
-            //     Console.WriteLine(line);
-            // }
-            //  sw.Close();
-            //}
+            calibrate();           
         }
 
 
@@ -168,29 +150,40 @@ namespace harmony
         }
 
 
-        //drag and drop stuff
-        private void ellipse_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private String GetImageExifDatetime(String filename)
         {
-            Rectangle ellipse = sender as Rectangle;
-            if (ellipse != null && e.LeftButton == MouseButtonState.Pressed)
+            //  Console.WriteLine(filename);
+            ExifReader reader = new ExifReader(filename);
+
+            DateTime datePictureTaken;
+            if (reader.GetTagValue<DateTime>(ExifTags.DateTimeDigitized,
+                                                out datePictureTaken))
             {
-                DragDrop.DoDragDrop(ellipse,
-                                     ellipse.Fill.ToString(),
-                                     System.Windows.DragDropEffects.Copy);
+                return datePictureTaken.ToString();
+
             }
+            else
+            {
+                return @"Error";
+            }
+
+
+
+
         }
+
 
         private void ellipse_Drop(object sender, System.Windows.DragEventArgs e)
         {
-           // foreach (String item in (String[])e.Data.GetData((System.Windows.DataFormats.FileDrop)))
-           // {
-           //     Console.WriteLine(System.IO.Path.GetFullPath(item));
-           // }
+            foreach (String item in (String[])e.Data.GetData((System.Windows.DataFormats.FileDrop)))
+            {
+                var file = System.IO.Path.GetFullPath(item);
+                Console.WriteLine(GetImageExifDatetime(file));
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("BIN FILE??");
           
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Binary Log|*.bin";
@@ -257,7 +250,7 @@ namespace harmony
 
                 //Console.WriteLine("lines?? {0}", d.Count());
                   foreach (var item in d)
-                      Console.WriteLine("{0} {1} {2} {3}", item.datetime.ToString("MM/dd/yyyy hh:mm:ss.fff tt"), item.lat, item.lon, item.yaw);
+                      Console.WriteLine("{0} {1} {2} {3}", item.datetime.ToString("MM/dd/yyyy hh:mm:ss.fff tt zz"), item.lat, item.lon, item.yaw);
 
                 Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Valid GPS file {0} cordinates",d.Count()) ));
 

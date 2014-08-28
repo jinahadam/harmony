@@ -42,6 +42,18 @@
     </dependentAssembly>
   </dependency>
   <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ExifLib.dll" size="28672">
+      <assemblyIdentity name="ExifLib" version="1.6.1.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>gpeXMrMBWtKPXJtsWQ0Nb1WAE77CwggxHhKihNgSweE=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="harmony.exe" size="17920">
       <assemblyIdentity name="harmony" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -49,7 +61,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>68AXDgU7RcKeNNZBVeZCYn8ke9xp6X4PMf+xFc8SA3w=</dsig:DigestValue>
+        <dsig:DigestValue>dSxdi+MK2kGRHKF1wzI+gncRc+fG45msiablYSAy+VY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -1,0 +1,5 @@
+\\psf\Home\Desktop\Code\harmony\Exiflib\bin\Debug\ExifLib.dll
+\\psf\Home\Desktop\Code\harmony\Exiflib\bin\Debug\ExifLib.pdb
+\\psf\Home\Desktop\Code\harmony\Exiflib\obj\Debug\ExifLib.csprojResolveAssemblyReference.cache
+\\psf\Home\Desktop\Code\harmony\Exiflib\obj\Debug\ExifLib.dll
+\\psf\Home\Desktop\Code\harmony\Exiflib\obj\Debug\ExifLib.pdb
