@@ -19,6 +19,8 @@ using System.IO;
 using uint8_t = System.Byte;
 using System.Runtime.InteropServices;
 using ExifLib;
+using System.Threading;
+
 
 
 namespace harmony
@@ -70,6 +72,7 @@ namespace harmony
         public const int calibration_interval = 10000;
 
         public DateTime[] dates = new DateTime[calibration_tries];
+        public DateTime[] image_dates = new DateTime[calibration_tries];
 
         public int tries = 0;
         int count_down = 10;
@@ -79,7 +82,7 @@ namespace harmony
         public MainWindow()
         {
             InitializeComponent();
-
+            statusBar.Content = "Calibration Difference : 0 seconds";
 
         }
 
@@ -121,7 +124,8 @@ namespace harmony
                 if (count_down == 0)
                 {
                     Dispatcher.Invoke((Action)(() => displayLabel.Content = "Snap!!"));
-                    dates[tries] = DateTime.Today;
+                    Console.WriteLine("Try {0} {1}", tries, DateTime.Now);
+                    dates[tries-1] = DateTime.Now;
 
                 }
 
@@ -175,10 +179,99 @@ namespace harmony
 
         private void ellipse_Drop(object sender, System.Windows.DragEventArgs e)
         {
+
+
+            String type = "";
             foreach (String item in (String[])e.Data.GetData((System.Windows.DataFormats.FileDrop)))
             {
-                var file = System.IO.Path.GetFullPath(item);
-                Console.WriteLine(GetImageExifDatetime(file));
+                //Console.WriteLine(System.IO.Path.GetExtension(item));
+                type = System.IO.Path.GetExtension(item);
+            }
+
+            if (type.Length > 0)
+            {
+                Console.WriteLine("Calibration");
+
+                int i = -1;
+                foreach (String item in (String[])e.Data.GetData((System.Windows.DataFormats.FileDrop)))
+                {
+                    i++;
+                    var file = System.IO.Path.GetFullPath(item);
+                   // Console.WriteLine(GetImageExifDatetime(item));
+                    image_dates[i] = DateTime.Parse(GetImageExifDatetime(item));
+                    //Console.WriteLine(image_dates[i]);
+                }
+
+               // foreach (var item in image_dates)
+                   // Console.WriteLine(item);
+
+              //  Console.WriteLine("SORT----");
+                Array.Sort(image_dates);
+
+
+              //  foreach (var item in image_dates)
+              //       Console.WriteLine(item);
+
+               // foreach (var item in dates)
+                 //   Console.WriteLine(item);
+
+                try
+                {
+                    int j = -1;
+                    foreach (var item in image_dates) {
+                        j++;
+                        //Console.WriteLine("Date Diff dates {0}, image dates {1}", item, dates[j]);
+                       Console.WriteLine( (item - dates[j]).TotalSeconds);
+                    }
+
+
+                }
+                catch
+                {
+
+                }
+                //delete Logs folder contents
+               // System.IO.DirectoryInfo downloadedMessageInfo = new DirectoryInfo(logDir);
+               // foreach (FileInfo file in downloadedMessageInfo.GetFiles())
+               // {
+                    //file.Delete();
+               // }
+
+             //   File.Copy(logfilepath, logDir + System.IO.Path.AltDirectorySeparatorChar + "uploaded.log", true);
+             //   Dispatcher.Invoke((Action)(() => ImageCountLabel.Content = "Drag Images folder"));
+             //   timer2.Stop();
+            }
+            else
+            {
+                Console.WriteLine("Matching");
+
+
+                ThreadPool.QueueUserWorkItem((o) =>
+                {
+                    
+                    Dispatcher.Invoke((Action)(() => displayLabel.Content = "Processing Images"));
+
+                    List<String> exifData = new List<String>();
+                    string[] directoryName = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+                    string[] temp_files = Directory.GetFiles(directoryName[0]);
+                    List<String> t = new List<String>();
+                    foreach (String file in temp_files)
+                    {
+                        if ((System.IO.Path.GetExtension(file)).ToUpper() == ".JPG")
+                        {
+                            t.Add(file);
+                            Console.WriteLine(file);
+                        }
+                    }
+
+                    string[] files = t.ToArray();
+
+                    
+                
+                });
+
+                    
+
             }
         }
 
