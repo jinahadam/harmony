@@ -255,9 +255,9 @@ namespace harmony
 
                 List<GPS_LINE> d = combineGPSandATT(lines);
 
-               // Console.WriteLine("lines?? {0}", d.Count());
-               //   foreach (var item in d)
-                //      Console.WriteLine("{0} {1} {2} {3}", item.datetime.ToString("MM/dd/yyyy HH:mm:ss"), item.lat, item.lon, item.yaw);
+                //Console.WriteLine("lines?? {0}", d.Count());
+                  foreach (var item in d)
+                      Console.WriteLine("{0} {1} {2} {3}", item.datetime.ToString("MM/dd/yyyy hh:mm:ss.fff tt"), item.lat, item.lon, item.yaw);
 
                 Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Valid GPS file {0} cordinates",d.Count()) ));
 
@@ -349,9 +349,8 @@ namespace harmony
         {
             DateTime gpsweekstart = DateTime.Parse("06 January 1980");
             int days = int.Parse(gpsweek) * 7;
-            var dt =  gpsweekstart.AddDays(days).AddSeconds(double.Parse(gpstime) / 1000).ToString();
             //converts to localtime from UTC
-            DateTime convertedDate = DateTime.Parse(dt);
+            DateTime convertedDate =gpsweekstart.AddDays(days).AddSeconds(double.Parse(gpstime) / 1000);
             return TimeZone.CurrentTimeZone.ToLocalTime(convertedDate);
                
 
