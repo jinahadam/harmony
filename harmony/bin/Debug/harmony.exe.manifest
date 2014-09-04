@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="harmony.exe" size="19968">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="harmony.exe" size="22528">
       <assemblyIdentity name="harmony" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>gdmaREAQV/4O4SvGZmL9mYbW8IY9ShIwWDws8yY05Y4=</dsig:DigestValue>
+        <dsig:DigestValue>Ig23x9hCQaBsylCob+FDN5GF+VjUbut/ZhhUvSGgMwA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -90,6 +90,29 @@ namespace harmony
 
         }
 
+
+        public  IEnumerable<double> Modes(IEnumerable<double> list)
+        {
+            var modesList = list
+                .GroupBy(values => values)
+                .Select(valueCluster =>
+                        new
+                        {
+                            Value = valueCluster.Key,
+                            Occurrence = valueCluster.Count(),
+                        })
+                .ToList();
+
+            int maxOccurrence = modesList
+                .Max(g => g.Occurrence);
+
+            return modesList
+                .Where(x => x.Occurrence == maxOccurrence && maxOccurrence > 1) // Thanks Rui!
+                .Select(x => x.Value);
+        }
+
+
+
         private void onSecondElapased(object sender, ElapsedEventArgs e)
         {
             count_down--;
@@ -181,14 +204,35 @@ namespace harmony
                 }
 
                 Array.Sort(image_dates);
+                List<Double> times_for_medium = new List<Double>();
+
 
                 try
                 {
                     int j = -1;
                     foreach (var item in image_dates) {
                         j++;
-                       Console.WriteLine( (item - dates[j]).TotalSeconds );
+                       
+                        Console.WriteLine( (item - dates[j]).TotalSeconds );
+                        times_for_medium.Add((item - dates[j]).TotalSeconds);
+
+
                     }
+
+                    IEnumerable<double> result = Modes(times_for_medium);
+
+
+                    if (result.Count() > 0) {
+                        Console.WriteLine("Mode is {0}", result.ElementAt(0));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Calibration Failed");
+
+                    }
+
+
+
 
 
                 }
