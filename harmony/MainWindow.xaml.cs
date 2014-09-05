@@ -62,7 +62,11 @@ namespace harmony
         public MainWindow()
         {
             InitializeComponent();
-            statusBar.Content = "Calibration Difference : 0 seconds";
+            var cal = Properties.Settings.Default["Calibration"];
+            statusBar.Content = String.Format("Calibration Difference : {0}", cal);
+
+          
+
 
         }
 
@@ -212,23 +216,40 @@ namespace harmony
                     int j = -1;
                     foreach (var item in image_dates) {
                         j++;
-                       
-                        Console.WriteLine( (item - dates[j]).TotalSeconds );
-                        times_for_medium.Add((item - dates[j]).TotalSeconds);
 
+                        Console.WriteLine(Math.Round((item - dates[j]).TotalSeconds, 0));
+                        times_for_medium.Add(Math.Round((item - dates[j]).TotalSeconds, 0));
 
+                        
                     }
 
-                    IEnumerable<double> result = Modes(times_for_medium);
+
+                    try {
+                    double mode = times_for_medium.GroupBy(k => k)  //Grouping same items
+                                 .OrderByDescending(g => g.Count()) //now getting frequency of a value
+                                 .Select(g => g.Key) //selecting key of the group
+                                 .FirstOrDefault();   //Finally, taking the most frequent value
 
 
-                    if (result.Count() > 0) {
-                        Console.WriteLine("Mode is {0}", result.ElementAt(0));
+                        Console.WriteLine("mode {0}", mode);
+                        Properties.Settings.Default["Calibration"] = mode.ToString();
+                        Properties.Settings.Default.Save();
+                        Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Calibration Difference : {0}", mode)));
+                        var cal = Properties.Settings.Default["Calibration"];
+                        Dispatcher.Invoke((Action)(() =>  statusBar.Content = String.Format("Calibration Difference : {0}", cal)));
+
+          
                     }
-                    else
+                    catch
+
                     {
-                        Console.WriteLine("Calibration Failed");
 
+                      //  Properties.Settings.Default["Calibration"] = "Calibration Failed :(";
+                      //  Properties.Settings.Default.Save();
+                      //  var cal = Properties.Settings.Default["Calibration"];
+                      //  statusBar.Content = String.Format("Calibration Difference : {0}", cal);
+
+          
                     }
 
 
