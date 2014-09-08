@@ -15,7 +15,7 @@
             </Label.RenderTransform>
         </Label>
 
-        <Rectangle Fill="#FFBAC5BA" HorizontalAlignment="Left" Height="240" Margin="-9,94,0,0" VerticalAlignment="Top" Width="826"
+        <Rectangle Fill="#FFBAC5BA" HorizontalAlignment="Left" Height="240" Margin="0,94,0,0" VerticalAlignment="Top" Width="817"
              AllowDrop="True" Drop="ellipse_Drop"/>
         <Button Content="Upload .BIN file" HorizontalAlignment="Left" Margin="414,10,0,0" VerticalAlignment="Top" Width="183" Height="39" Click="Button_Click_1"/>
         <StatusBar Height="36" VerticalAlignment="Bottom">

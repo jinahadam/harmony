@@ -259,6 +259,7 @@ namespace harmony
                     string[] temp_files = Directory.GetFiles(directoryName[0]);
                     List<String> t = new List<String>();
                     double cal = Convert.ToDouble(Properties.Settings.Default["Calibration"]);
+                    double roll = Convert.ToDouble(Properties.Settings.Default["Roll"]);
                     
                     
                     foreach (String file in temp_files)
@@ -271,6 +272,10 @@ namespace harmony
 
                     string[] files = t.ToArray();
                     List<string> matched = new List<string>();
+                    int match_count = 0;
+                    int discarded_count = 0;
+
+
 
 
                     foreach (var fname in files)
@@ -283,8 +288,15 @@ namespace harmony
                             {
                                 //Console.WriteLine("match");
                                 match = true;
-                                matched.Add(String.Format("{0},{1},{2},{3},{4},{5},{6}", GetFileName(fname), gps.lat, gps.lon, gps.alt, gps.roll, gps.pitch, gps.yaw));
-
+                                match_count++;
+                                if (gps.roll > (roll*-1) && gps.roll < roll)
+                                {
+                                    matched.Add(String.Format("{0},{1},{2},{3},{4},{5},{6}", GetFileName(fname), gps.lat, gps.lon, gps.alt, gps.roll, gps.pitch, gps.yaw));
+                                }
+                                else
+                                {
+                                    discarded_count++;
+                                }
                                 break;
                             }
                         }
@@ -297,7 +309,16 @@ namespace harmony
                                 {
                                     //Console.WriteLine("match");
                                     match = true;
-                                    matched.Add(String.Format("{0},{1},{2},{3},{4},{5},{6}",GetFileName(fname),gps.lat,gps.lon,gps.alt,gps.roll,gps.pitch,gps.yaw));
+                                    match_count++;
+                                    if (gps.roll > (roll * -1) && gps.roll < roll)
+                                    {
+                                        matched.Add(String.Format("{0},{1},{2},{3},{4},{5},{6}", GetFileName(fname), gps.lat, gps.lon, gps.alt, gps.roll, gps.pitch, gps.yaw));
+                                    }
+                                    else
+                                    {
+                                        discarded_count++;
+                                    }
+                                    
                                     break;
                                 }
                             }
@@ -318,7 +339,7 @@ namespace harmony
                     string textFileDir = Directory.GetCurrentDirectory() + System.IO.Path.DirectorySeparatorChar;
                     System.IO.File.WriteAllLines(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt", matched.ToArray());
                     System.Diagnostics.Process.Start(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt");
-                    Dispatcher.Invoke((Action)(() => displayLabel.Content = "Processing Done."));
+                    Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Processing Done. {0}/{1} images matched. {2} discarded", match_count, files.Count(), discarded_count)));
 
 
                 }); //end thread
