@@ -57,11 +57,20 @@ namespace harmony
         public int tries = 0;
         int count_down = 10;
 
+        List<GPS_LINE> gps_lines;
+
 
 
         public MainWindow()
         {
             InitializeComponent();
+
+
+            Properties.Settings.Default["Calibration"] = "-3705";
+            Properties.Settings.Default.Save();
+
+
+
             var cal = Properties.Settings.Default["Calibration"];
             statusBar.Content = String.Format("Calibration Difference : {0}", cal);
 
@@ -78,6 +87,13 @@ namespace harmony
 
         private void calibrate()
         {
+
+            if (aTimer != null)
+            {
+                aTimer.Enabled = false;
+                bTimer.Enabled = false;
+            }
+               
             tries = 0;
             count_down = 10;
 
@@ -95,28 +111,7 @@ namespace harmony
         }
 
 
-        public  IEnumerable<double> Modes(IEnumerable<double> list)
-        {
-            var modesList = list
-                .GroupBy(values => values)
-                .Select(valueCluster =>
-                        new
-                        {
-                            Value = valueCluster.Key,
-                            Occurrence = valueCluster.Count(),
-                        })
-                .ToList();
-
-            int maxOccurrence = modesList
-                .Max(g => g.Occurrence);
-
-            return modesList
-                .Where(x => x.Occurrence == maxOccurrence && maxOccurrence > 1) // Thanks Rui!
-                .Select(x => x.Value);
-        }
-
-
-
+      
         private void onSecondElapased(object sender, ElapsedEventArgs e)
         {
             count_down--;
@@ -131,7 +126,6 @@ namespace harmony
                 if (count_down == 0)
                 {
                     Dispatcher.Invoke((Action)(() => displayLabel.Content = "Snap!!"));
-                    Console.WriteLine("Try {0} {1}", tries, DateTime.Now);
                     dates[tries-1] = DateTime.Now;
 
                 }
@@ -185,26 +179,20 @@ namespace harmony
         private void ellipse_Drop(object sender, System.Windows.DragEventArgs e)
         {
 
-
             String type = "";
             foreach (String item in (String[])e.Data.GetData((System.Windows.DataFormats.FileDrop)))
             {
-                //Console.WriteLine(System.IO.Path.GetExtension(item));
                 type = System.IO.Path.GetExtension(item);
             }
 
             if (type.Length > 0)
             {
-                Console.WriteLine("Calibration");
-
                 int i = -1;
                 foreach (String item in (String[])e.Data.GetData((System.Windows.DataFormats.FileDrop)))
                 {
                     i++;
                     var file = System.IO.Path.GetFullPath(item);
-                   // Console.WriteLine(GetImageExifDatetime(item));
                     image_dates[i] = DateTime.Parse(GetImageExifDatetime(item));
-                    //Console.WriteLine(image_dates[i]);
                 }
 
                 Array.Sort(image_dates);
@@ -220,18 +208,17 @@ namespace harmony
                         Console.WriteLine(Math.Round((item - dates[j]).TotalSeconds, 0));
                         times_for_medium.Add(Math.Round((item - dates[j]).TotalSeconds, 0));
 
-                        
                     }
 
 
                     try {
-                    double mode = times_for_medium.GroupBy(k => k)  //Grouping same items
-                                 .OrderByDescending(g => g.Count()) //now getting frequency of a value
-                                 .Select(g => g.Key) //selecting key of the group
-                                 .FirstOrDefault();   //Finally, taking the most frequent value
+                        //using linq to calculate mode
+                        double mode = times_for_medium.GroupBy(k => k)  
+                                 .OrderByDescending(g => g.Count()) 
+                                 .Select(g => g.Key) 
+                                 .FirstOrDefault();  
 
 
-                        Console.WriteLine("mode {0}", mode);
                         Properties.Settings.Default["Calibration"] = mode.ToString();
                         Properties.Settings.Default.Save();
                         Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Calibration Difference : {0}", mode)));
@@ -239,16 +226,9 @@ namespace harmony
                         Dispatcher.Invoke((Action)(() =>  statusBar.Content = String.Format("Calibration Difference : {0}", cal)));
 
           
-                    }
-                    catch
+                    } catch {
 
-                    {
-
-                      //  Properties.Settings.Default["Calibration"] = "Calibration Failed :(";
-                      //  Properties.Settings.Default.Save();
-                      //  var cal = Properties.Settings.Default["Calibration"];
-                      //  statusBar.Content = String.Format("Calibration Difference : {0}", cal);
-
+                       
           
                     }
 
@@ -259,7 +239,7 @@ namespace harmony
                 }
                 catch
                 {
-
+                    Dispatcher.Invoke((Action)(() => statusBar.Content = "Calibration Failed. :( "));
                 }
             }
             else
@@ -276,24 +256,77 @@ namespace harmony
                     string[] directoryName = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
                     string[] temp_files = Directory.GetFiles(directoryName[0]);
                     List<String> t = new List<String>();
+                    double cal = Convert.ToDouble(Properties.Settings.Default["Calibration"]);
+                    
+                    
                     foreach (String file in temp_files)
                     {
                         if ((System.IO.Path.GetExtension(file)).ToUpper() == ".JPG")
                         {
                             t.Add(file);
-                            Console.WriteLine(file);
                         }
                     }
 
                     string[] files = t.ToArray();
+                    List<string> matched = new List<string>();
 
-                    
-                
-                });
+
+                    foreach (var fname in files)
+                    {
+                        DateTime imageDt = DateTime.Parse(GetImageExifDatetime(fname)).AddSeconds(cal);
+                        bool match = false;
+                        foreach (var gps in gps_lines)
+                        {
+                            if (imageDt.ToString("hh.mm.ss.ffffff") == gps.datetime.ToString("hh.mm.ss.ffffff"))
+                            {
+                                //Console.WriteLine("match");
+                                match = true;
+                                matched.Add(String.Format("{0},{1},{2},{3},{4}",GetFileName(fname),gps.datetime,gps.lat,gps.lon,gps.alt));
+
+                                break;
+                            }
+                        }
+
+                        if (!match)
+                        {
+                            foreach (var gps in gps_lines)
+                            {
+                                if (imageDt.ToString("hh.mm.ss") == gps.datetime.ToString("hh.mm.ss"))
+                                {
+                                    //Console.WriteLine("match");
+                                    match = true;
+                                    matched.Add(String.Format("{0},{1},{2},{3},{4}",GetFileName(fname),gps.datetime,gps.lat,gps.lon,gps.alt));
+                                    break;
+                                }
+                            }
+
+                        }
+
+                        if (!match)
+                            Console.WriteLine("no match found: {0}", imageDt.ToString("hh.mm.ss.ffffff"));
+
+
+
+                        //write to a file and open it
+                      
+        
+
+                    } //end loop
+
+                    string textFileDir = Directory.GetCurrentDirectory() + System.IO.Path.DirectorySeparatorChar;
+                    System.IO.File.WriteAllLines(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt", matched.ToArray());
+                    System.Diagnostics.Process.Start(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt");
+
+                }); //end thread
 
                     
 
             }
+        }
+
+        private String GetFileName(String file)
+        {
+            return System.IO.Path.GetFileName(file);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -306,15 +339,11 @@ namespace harmony
 
             if (File.Exists(ofd.FileName))
             {
+
                 BinParser bp = new BinParser(ofd.FileName);
                 List<GPS_LINE> lines = bp.Lines();
-                List<GPS_LINE> d = combineGPSandATT(lines);
-
-                //Console.WriteLine("lines?? {0}", d.Count());
-                //  foreach (var item in d)
-                //      Console.WriteLine("{0} {1} {2} {3}", item.datetime.ToString("MM/dd/yyyy hh:mm:ss.fff tt zz"), item.lat, item.lon, item.yaw);
-
-                Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Valid GPS file {0} cordinates",d.Count()) ));
+                gps_lines = combineGPSandATT(lines);
+                Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Valid GPS file {0} cordinates",gps_lines.Count()) ));
 
 
             }
@@ -627,10 +656,6 @@ namespace harmony
                 gps_line.alt = float.Parse(alt);
                 gps_line.type = "GPS";
 
-
-                //Console.WriteLine("time: {0} {1} {2} {3}",DateTimeFromGPSTimeandGPSWeek(gps_time, gps_week), lat, lon, alt );
-                // foreach (var item in items)
-                //     Console.Write(item);
             }
             else if (items[0].Contains("ATT"))
             {
