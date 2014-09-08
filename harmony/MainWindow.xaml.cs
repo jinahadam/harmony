@@ -281,7 +281,7 @@ namespace harmony
                             {
                                 //Console.WriteLine("match");
                                 match = true;
-                                matched.Add(String.Format("{0},{1},{2},{3},{4}",GetFileName(fname),gps.datetime,gps.lat,gps.lon,gps.alt));
+                                matched.Add(String.Format("{0},{1},{2},{3},{4},{5},{6}", GetFileName(fname), gps.lat, gps.lon, gps.alt, gps.roll, gps.pitch, gps.yaw));
 
                                 break;
                             }
@@ -295,7 +295,7 @@ namespace harmony
                                 {
                                     //Console.WriteLine("match");
                                     match = true;
-                                    matched.Add(String.Format("{0},{1},{2},{3},{4}",GetFileName(fname),gps.datetime,gps.lat,gps.lon,gps.alt));
+                                    matched.Add(String.Format("{0},{1},{2},{3},{4},{5},{6}",GetFileName(fname),gps.lat,gps.lon,gps.alt,gps.roll,gps.pitch,gps.yaw));
                                     break;
                                 }
                             }
@@ -316,6 +316,8 @@ namespace harmony
                     string textFileDir = Directory.GetCurrentDirectory() + System.IO.Path.DirectorySeparatorChar;
                     System.IO.File.WriteAllLines(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt", matched.ToArray());
                     System.Diagnostics.Process.Start(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt");
+                    Dispatcher.Invoke((Action)(() => displayLabel.Content = "Processing Done."));
+
 
                 }); //end thread
 
@@ -343,9 +345,9 @@ namespace harmony
                 BinParser bp = new BinParser(ofd.FileName);
                 List<GPS_LINE> lines = bp.Lines();
                 gps_lines = combineGPSandATT(lines);
-                Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Valid GPS file {0} cordinates",gps_lines.Count()) ));
+                Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Valid GPS file {0} cordinates, Drag the image folder to the box below",gps_lines.Count()) ));
 
-
+                
             }
 
 
@@ -383,9 +385,6 @@ namespace harmony
             return result;
 
         } //end uplaod function
-
-
-      
 
 
     } //end of class
