@@ -54,24 +54,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="harmony.exe" size="23040">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="harmony.exe" size="26624">
       <assemblyIdentity name="harmony" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>jDzfB2y+ti9y/a1hNHKxTioNOxd4O1nhtsFm6dXLwQg=</dsig:DigestValue>
+        <dsig:DigestValue>N4sE5Ws+BPqI7I69WkLp/deJbZJQSwBmo1DCK13jInk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="harmony.exe.config" size="922">
+  <file name="harmony.exe.config" size="1036">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>LAcpdB4U9oIMSCbQYnZ9GdzqpOXmgrEk5ZhM4AeIwJo=</dsig:DigestValue>
+      <dsig:DigestValue>8RMEE8c02Ymwf16erzRgdDU2OFwWMtqU4Z1/g3DsrWU=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

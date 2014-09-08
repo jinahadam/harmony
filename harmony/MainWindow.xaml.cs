@@ -60,23 +60,29 @@ namespace harmony
         List<GPS_LINE> gps_lines;
 
 
-
+        internal static MainWindow main;
         public MainWindow()
         {
             InitializeComponent();
 
 
-            Properties.Settings.Default["Calibration"] = "-3705";
-            Properties.Settings.Default.Save();
+           // Properties.Settings.Default["Calibration"] = "-3705";
+ //           Properties.Settings.Default.Save();
 
 
 
             var cal = Properties.Settings.Default["Calibration"];
             statusBar.Content = String.Format("Calibration Difference : {0}", cal);
 
-          
+            main = this;
 
+        }
 
+       
+        internal string Status
+        {
+            get { return statusBar.Content.ToString(); }
+            set { Dispatcher.Invoke(new Action(() => { statusBar.Content = String.Format("Calibration Difference : {0}", value); })); }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -218,7 +224,6 @@ namespace harmony
                                  .Select(g => g.Key) 
                                  .FirstOrDefault();  
 
-
                         Properties.Settings.Default["Calibration"] = mode.ToString();
                         Properties.Settings.Default.Save();
                         Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Calibration Difference : {0}", mode)));
@@ -231,9 +236,6 @@ namespace harmony
                        
           
                     }
-
-
-
 
 
                 }
@@ -384,7 +386,16 @@ namespace harmony
 
             return result;
 
-        } //end uplaod function
+        }
+
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            Window1 win2 = new Window1();
+            win2.Topmost = true;
+            win2.Show();
+           // this.Close();
+        }
 
 
     } //end of class

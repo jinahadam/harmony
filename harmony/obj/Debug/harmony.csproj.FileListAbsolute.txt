@@ -30,3 +30,5 @@
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\harmony.exe
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\harmony.pdb
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\harmony.csprojResolveAssemblyReference.cache
+\\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\Window1.baml
+\\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\Window1.g.cs

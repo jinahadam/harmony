@@ -5,5 +5,8 @@
     <Setting Name="Calibration" Type="System.String" Scope="User">
       <Value Profile="(Default)">Not Done</Value>
     </Setting>
+    <Setting Name="Roll" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

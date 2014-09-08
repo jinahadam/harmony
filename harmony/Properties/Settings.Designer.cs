@@ -34,5 +34,17 @@ namespace harmony.Properties {
                 this["Calibration"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public string Roll {
+            get {
+                return ((string)(this["Roll"]));
+            }
+            set {
+                this["Roll"] = value;
+            }
+        }
     }
 }
