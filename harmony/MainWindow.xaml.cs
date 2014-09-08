@@ -73,9 +73,9 @@ namespace harmony
 
             var cal = Properties.Settings.Default["Calibration"];
             statusBar.Content = String.Format("Calibration Difference : {0}", cal);
-
             main = this;
 
+                
         }
 
        
