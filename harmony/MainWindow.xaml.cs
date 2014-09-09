@@ -57,7 +57,7 @@ namespace harmony
         public int tries = 0;
         int count_down = 10;
 
-        List<GPS_LINE> gps_lines;
+        List<GPS_LINE> gps_lines = new List<GPS_LINE>();
 
 
         internal static MainWindow main;
@@ -256,13 +256,30 @@ namespace harmony
 
                     List<String> exifData = new List<String>();
                     string[] directoryName = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
-                    string[] temp_files = Directory.GetFiles(directoryName[0]);
+                    //where to handle multiple folders
+
+                    List<String> allfiles = new List<String>();
+
+                    //handles multiple folders
+                    if (directoryName.Count() == 1)
+                    {
+                        allfiles = Directory.GetFiles(directoryName[0]).ToList();
+                    } else if (directoryName.Count() > 1) {
+                       
+                        foreach (var dir in directoryName) {
+                            foreach (var f in Directory.GetFiles(dir)) {
+                                  allfiles.Add(f);
+                            }
+                        }
+
+                    }
+
                     List<String> t = new List<String>();
                     double cal = Convert.ToDouble(Properties.Settings.Default["Calibration"]);
                     double roll = Convert.ToDouble(Properties.Settings.Default["Roll"]);
                     
-                    
-                    foreach (String file in temp_files)
+                    //TODO: move this to the directory read loop.?
+                    foreach (String file in allfiles.ToArray())
                     {
                         if ((System.IO.Path.GetExtension(file)).ToUpper() == ".JPG")
                         {
@@ -270,16 +287,44 @@ namespace harmony
                         }
                     }
 
+                    Console.WriteLine("image count {0}", t.Count());
+
                     string[] files = t.ToArray();
                     List<string> matched = new List<string>();
                     int match_count = 0;
                     int discarded_count = 0;
 
+                    /*
+                    List<String> debug_gps = new List<String>();
+                    foreach (var g in gps_lines)
+                    {
+                        debug_gps.Add(g.datetime.ToString("hh.mm.ss.ffffff"));    
+                    }
 
+                    string textFileDir = Directory.GetCurrentDirectory() + System.IO.Path.DirectorySeparatorChar;
+                    System.IO.File.WriteAllLines(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt", debug_gps.ToArray());
+                    System.Diagnostics.Process.Start(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt");
+                    */
 
-
+                    /*
+                    List<String> debug_exif = new List<String>();
                     foreach (var fname in files)
                     {
+                        debug_exif.Add(DateTime.Parse(GetImageExifDatetime(fname)).ToString("hh.mm.ss.ffffff"));
+                    }
+
+                    string textFileDir = Directory.GetCurrentDirectory() + System.IO.Path.DirectorySeparatorChar;
+                    System.IO.File.WriteAllLines(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt", debug_exif.ToArray());
+                    System.Diagnostics.Process.Start(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt");
+                    */
+
+
+                    int processing_count = 0;
+                    foreach (var fname in files)
+                    {
+                        processing_count++;
+                        Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Processing {0} of {1} ", processing_count, files.Count())));
+
                         DateTime imageDt = DateTime.Parse(GetImageExifDatetime(fname)).AddSeconds(cal);
                         bool match = false;
                         foreach (var gps in gps_lines)
@@ -326,7 +371,11 @@ namespace harmony
                         }
 
                         if (!match)
-                            Console.WriteLine("no match found: {0}", imageDt.ToString("hh.mm.ss.ffffff"));
+                        {
+                          //  Console.WriteLine("{0} no match", imageDt.ToString("hh.mm.ss.ffffff"));
+                            
+                        }
+                        //    Console.WriteLine("no match found: {0}", imageDt.ToString("hh.mm.ss.ffffff"));
 
 
 
@@ -336,11 +385,12 @@ namespace harmony
 
                     } //end loop
 
+                    
                     string textFileDir = Directory.GetCurrentDirectory() + System.IO.Path.DirectorySeparatorChar;
                     System.IO.File.WriteAllLines(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt", matched.ToArray());
                     System.Diagnostics.Process.Start(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt");
                     Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Processing Done. {0}/{1} images matched. {2} discarded", match_count, files.Count(), discarded_count)));
-
+                    
 
                 }); //end thread
 
@@ -358,23 +408,31 @@ namespace harmony
         {
           
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Multiselect = true;
             ofd.Filter = "Binary Log|*.bin";
-
             ofd.ShowDialog();
 
-            if (File.Exists(ofd.FileName))
-            {
 
-                BinParser bp = new BinParser(ofd.FileName);
-                List<GPS_LINE> lines = bp.Lines();
-                gps_lines = combineGPSandATT(lines);
-                Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Valid GPS file {0} cordinates, Drag the image folder to the box below",gps_lines.Count()) ));
+            //handles mutliple .BIN Files
+            foreach (var bin_file in ofd.FileNames) {
+                Dispatcher.Invoke((Action)(() => displayLabel.Content = "Processing .BIN file(s)"));
+
+                if (File.Exists(bin_file))
+                {
+
+                    BinParser bp = new BinParser(bin_file);
+                    List<GPS_LINE> lines = bp.Lines();
+                    foreach (GPS_LINE line in combineGPSandATT(lines)) {
+                        gps_lines.Add(line);
+                    }
+                    
 
                 
+                }
             }
 
+            Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("{0} GPS cordinates, Drag the image folder to the box below or add more .BIN files", gps_lines.Count())));
 
-          
 
 
         }
