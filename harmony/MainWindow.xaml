@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Harmony" Height="421.485" Width="823.046" ResizeMode="NoResize" Opacity="0.95" WindowStartupLocation="CenterScreen" BorderThickness="0" Topmost="True">
     <Grid>
-        <Button Content="Calibrate " HorizontalAlignment="Left" Margin="228,10,0,0" VerticalAlignment="Top" Width="169" Click="Button_Click" Height="39"/>
+        <Button Content="Calibrate " HorizontalAlignment="Left" Margin="218,10,0,0" VerticalAlignment="Top" Width="136" Click="Button_Click" Height="39"/>
         <Label x:Name="displayLabel" Content="" Margin="3,59,11,0" VerticalAlignment="Top" Height="39" RenderTransformOrigin="0.5,0.5" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
             <Label.RenderTransform>
                 <TransformGroup>
@@ -17,12 +17,13 @@
 
         <Rectangle Fill="#FFBAC5BA" HorizontalAlignment="Left" Height="240" Margin="0,111,0,0" VerticalAlignment="Top" Width="817"
              AllowDrop="True" Drop="ellipse_Drop"/>
-        <Button Content="Upload .BIN file" HorizontalAlignment="Left" Margin="414,10,0,0" VerticalAlignment="Top" Width="183" Height="39" Click="Button_Click_1"/>
+        <Button Content="Upload .BIN file" HorizontalAlignment="Left" Margin="365,11,0,0" VerticalAlignment="Top" Width="139" Height="39" Click="Button_Click_1"/>
         <StatusBar Height="36" VerticalAlignment="Bottom">
             <Label x:Name="statusBar" Content="status" Width="699" Height="25"/>
         </StatusBar>
-        <Button Content="Settings" HorizontalAlignment="Left" Margin="612,10,0,0" VerticalAlignment="Top" Width="155" Height="39" Click="Button_Click_3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-        <Image HorizontalAlignment="Left" Height="39" Margin="38,18,0,0" VerticalAlignment="Top" Width="237" Source="heron.png"/>
+        <Button Content="Settings" HorizontalAlignment="Left" Margin="665,10,0,0" VerticalAlignment="Top" Width="132" Height="39" Click="Button_Click_3" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <Image HorizontalAlignment="Left" Height="39" Margin="21,18,0,0" VerticalAlignment="Top" Width="237" Source="heron.png"/>
+        <Button x:Name="__" Content="Reset" HorizontalAlignment="Left" Margin="514,11,0,0" VerticalAlignment="Top" Width="140" Height="39" Click="___Click"/>
 
 
     </Grid>

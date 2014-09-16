@@ -476,6 +476,15 @@ namespace harmony
            // this.Close();
         }
 
+        private void ___Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("clear arrays");
+            gps_lines.Clear();
+            Dispatcher.Invoke((Action)(() => displayLabel.Content = "Upload .Bin Files to begin." ));
+
+
+        }
+
 
     } //end of class
 
@@ -590,6 +599,7 @@ namespace harmony
 
                     int len = Marshal.SizeOf(obj);
 
+
                     byte[] bytearray = br.ReadBytes(len);
 
                     IntPtr i = Marshal.AllocHGlobal(len);
@@ -613,7 +623,7 @@ namespace harmony
                     logformat[lgname] = logfmt;
 
                     string line = String.Format("FMT, {0}, {1}, {2}, {3}, {4}\r\n", logfmt.type, logfmt.length, lgname, lgformat, lglabels);
-
+                    Console.WriteLine(line);
                     return line;
 
                 default:
