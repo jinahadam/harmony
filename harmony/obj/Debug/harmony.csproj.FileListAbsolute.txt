@@ -18,7 +18,6 @@
 \\psf\Home\Desktop\Code\harmony\harmony\bin\Debug\harmony.pdb
 \\psf\Home\Desktop\Code\harmony\harmony\bin\Debug\ExifLib.dll
 \\psf\Home\Desktop\Code\harmony\harmony\bin\Debug\ExifLib.pdb
-\\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\harmony.csprojResolveAssemblyReference.cache
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\MainWindow.baml
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\Window1.baml
 \\psf\Home\Desktop\Code\harmony\harmony\obj\Debug\MainWindow.g.cs

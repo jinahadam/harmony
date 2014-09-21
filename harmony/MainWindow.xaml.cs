@@ -553,11 +553,14 @@ namespace harmony
                                 var processed_line = processLine(line);
                                 if (processed_line.type == "GPS" || processed_line.type == "ATT")
                                 {
+                                    
                                     lines.Add(processed_line);
                                 }
 
                             }
-                            catch { Console.WriteLine("Bad Binary log line {0}", data); }
+                            catch { 
+                             //    Console.WriteLine("Bad Binary log line {0}", data); 
+                            }
                             break;
                     }
                 }
@@ -576,7 +579,10 @@ namespace harmony
             int days = int.Parse(gpsweek) * 7;
             //converts to localtime from UTC
             DateTime convertedDate = gpsweekstart.AddDays(days).AddSeconds(double.Parse(gpstime) / 1000);
+          //  Console.WriteLine("{0} {1}", gpstime, gpsweek);
+           // Console.WriteLine(convertedDate.ToString("hh.mm.ss.ffffff"));
             return TimeZone.CurrentTimeZone.ToLocalTime(convertedDate);
+
 
 
 
@@ -623,7 +629,7 @@ namespace harmony
                     logformat[lgname] = logfmt;
 
                     string line = String.Format("FMT, {0}, {1}, {2}, {3}, {4}\r\n", logfmt.type, logfmt.length, lgname, lgformat, lglabels);
-                    Console.WriteLine(line);
+               //     Console.WriteLine(line);
                     return line;
 
                 default:
@@ -741,6 +747,8 @@ namespace harmony
 
             GPS_LINE gps_line = new GPS_LINE();
             string[] items = line.Split(',', ':');
+           
+
             if (items[0].Contains("GPS"))
             {
                 var gps_time = items[2];
@@ -758,21 +766,46 @@ namespace harmony
             }
             else if (items[0].Contains("ATT"))
             {
-                var roll = items[3];
-                var pitch = items[5];
-                var yaw = items[7];
-                gps_line.type = "ATT";
 
-                gps_line.roll = float.Parse(roll);
-                gps_line.pitch = float.Parse(pitch);
-                gps_line.yaw = float.Parse(yaw);
+               // Console.WriteLine("ATT Count {0}", items.Count());
 
-                // Console.WriteLine("{0} {1} {2}", roll, pitch, yaw);
+
+               // foreach (var item in items)
+               //     Console.WriteLine(item);
+                if (items.Count() == 8)
+                {
+                    //FMT, 1, 19, ATT, IccccCC, TimeMS,DesRoll,Roll,DesPitch,Pitch,DesYaw,Yaw
+
+                    var roll = items[3];
+                    var pitch = items[5];
+                    var yaw = items[7];
+                    gps_line.type = "ATT";
+
+                    gps_line.roll = float.Parse(roll);
+                    gps_line.pitch = float.Parse(pitch);
+                    gps_line.yaw = float.Parse(yaw);
+                }
+                else if (items.Count() == 7)
+                {
+                    //TimeMS,Roll,Pitch,Yaw,ErrorRP,ErrorYaw
+                    var roll = items[3];
+                    var pitch = items[4];
+                    var yaw = items[5];
+                    gps_line.type = "ATT";
+
+                    gps_line.roll = float.Parse(roll);
+                    gps_line.pitch = float.Parse(pitch);
+                    gps_line.yaw = float.Parse(yaw);
+
+                }
+
+              //   Console.WriteLine("{0} {1} {2}", roll, pitch, yaw);
 
                 // foreach (var item in items)
                 //      Console.Write(item);
             }
 
+         //   Console.WriteLine(gps_line.type);
             return gps_line;
 
         }
