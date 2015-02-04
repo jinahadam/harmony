@@ -46,5 +46,17 @@ namespace harmony.Properties {
                 this["Roll"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public string UTCDiff {
+            get {
+                return ((string)(this["UTCDiff"]));
+            }
+            set {
+                this["UTCDiff"] = value;
+            }
+        }
     }
 }

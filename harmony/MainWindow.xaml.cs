@@ -66,9 +66,12 @@ namespace harmony
             InitializeComponent();
 
 
+            //Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.ff"));
+            //Console.WriteLine(GetNISTDate().ToString("HH:mm:ss.ff"));
+
            // Properties.Settings.Default["Calibration"] = "-3705";
  //           Properties.Settings.Default.Save();
-
+          //  UTCvsLatopTimeValue();
 
 
             var cal = Properties.Settings.Default["Calibration"];
@@ -77,6 +80,9 @@ namespace harmony
 
                 
         }
+
+    
+
 
        
         internal string Status
@@ -211,10 +217,23 @@ namespace harmony
                     foreach (var item in image_dates) {
                         j++;
 
-                        Console.WriteLine(Math.Round((item - dates[j]).TotalSeconds, 0));
-                        times_for_medium.Add(Math.Round((item - dates[j]).TotalSeconds, 0));
+                     //   Console.WriteLine(Math.Round((item - dates[j]).TotalSeconds, 0));
+                        times_for_medium.Add(Math.Round(( dates[j] - item ).TotalSeconds, 0));
 
                     }
+
+                    List<String> calibration_gps = new List<String>();
+                    double utc = Convert.ToDouble(Properties.Settings.Default["UTCDiff"]);
+
+                 //   foreach (var g in times_for_medium)
+                 //   {
+                 //       calibration_gps.Add((g+utc).ToString());
+                 //   }
+
+                 //   string textFileDir = Directory.GetCurrentDirectory() + System.IO.Path.DirectorySeparatorChar;
+                 //   System.IO.File.WriteAllLines(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt", calibration_gps.ToArray());
+                 //   System.Diagnostics.Process.Start(textFileDir + System.IO.Path.DirectorySeparatorChar + "output.txt");
+               
 
 
                     try {
@@ -222,9 +241,11 @@ namespace harmony
                         double mode = times_for_medium.GroupBy(k => k)  
                                  .OrderByDescending(g => g.Count()) 
                                  .Select(g => g.Key) 
-                                 .FirstOrDefault();  
+                                 .FirstOrDefault();
 
-                        Properties.Settings.Default["Calibration"] = mode.ToString();
+                      //  double utc = Convert.ToDouble(Properties.Settings.Default["UTCDiff"]);
+
+                        Properties.Settings.Default["Calibration"] = (mode + utc +16).ToString();
                         Properties.Settings.Default.Save();
                         Dispatcher.Invoke((Action)(() => displayLabel.Content = String.Format("Calibration Difference : {0}", mode)));
                         var cal = Properties.Settings.Default["Calibration"];
@@ -276,6 +297,7 @@ namespace harmony
 
                     List<String> t = new List<String>();
                     double cal = Convert.ToDouble(Properties.Settings.Default["Calibration"]);
+                    //double cal = c + utc;
                     double roll = Convert.ToDouble(Properties.Settings.Default["Roll"]);
                     
                     //TODO: move this to the directory read loop.?
@@ -486,6 +508,10 @@ namespace harmony
         }
 
 
+      
+
+
+
     } //end of class
 
 
@@ -629,7 +655,7 @@ namespace harmony
                     logformat[lgname] = logfmt;
 
                     string line = String.Format("FMT, {0}, {1}, {2}, {3}, {4}\r\n", logfmt.type, logfmt.length, lgname, lgformat, lglabels);
-               //     Console.WriteLine(line);
+                    Console.WriteLine(line);
                     return line;
 
                 default:
@@ -767,11 +793,11 @@ namespace harmony
             else if (items[0].Contains("ATT"))
             {
 
-               // Console.WriteLine("ATT Count {0}", items.Count());
+//                Console.WriteLine("ATT Count {0}", items.Count());
 
 
-               // foreach (var item in items)
-               //     Console.WriteLine(item);
+              //  foreach (var item in items)
+              //      Console.WriteLine(item);
                 if (items.Count() == 8)
                 {
                     //FMT, 1, 19, ATT, IccccCC, TimeMS,DesRoll,Roll,DesPitch,Pitch,DesYaw,Yaw
@@ -788,9 +814,9 @@ namespace harmony
                 else if (items.Count() == 7)
                 {
                     //TimeMS,Roll,Pitch,Yaw,ErrorRP,ErrorYaw
-                    var roll = items[3];
-                    var pitch = items[4];
-                    var yaw = items[5];
+                    var roll = items[2];
+                    var pitch = items[3];
+                    var yaw = items[4];
                     gps_line.type = "ATT";
 
                     gps_line.roll = float.Parse(roll);
@@ -799,7 +825,7 @@ namespace harmony
 
                 }
 
-              //   Console.WriteLine("{0} {1} {2}", roll, pitch, yaw);
+               // Console.WriteLine("{0} {1} {2}", gps_line.roll, gps_line.pitch, gps_line.yaw);
 
                 // foreach (var item in items)
                 //      Console.Write(item);
