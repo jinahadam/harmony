@@ -773,8 +773,9 @@ namespace harmony
 
             GPS_LINE gps_line = new GPS_LINE();
             string[] items = line.Split(',', ':');
-           
 
+           // Console.WriteLine(items[0]);
+            
             if (items[0].Contains("GPS"))
             {
                 var gps_time = items[2];
@@ -824,14 +825,26 @@ namespace harmony
                     gps_line.yaw = float.Parse(yaw);
 
                 }
+                else if (items.Count() == 10)
+                {
+                    //TimeMS,DesRoll,Roll,DesPitch,Pitch,DesYaw,Yaw,ErrRP,ErrYaw
+                    var roll = items[3];
+                    var pitch = items[5];
+                    var yaw = items[7];
+                    gps_line.type = "ATT";
 
-               // Console.WriteLine("{0} {1} {2}", gps_line.roll, gps_line.pitch, gps_line.yaw);
+                    gps_line.roll = float.Parse(roll);
+                    gps_line.pitch = float.Parse(pitch);
+                    gps_line.yaw = float.Parse(yaw);
+                }
+
+               // Console.WriteLine("{0} {1} {2} {3}", items.Count(), gps_line.roll, gps_line.pitch, gps_line.yaw);
 
                 // foreach (var item in items)
-                //      Console.Write(item);
+                  //    Console.Write(item);
             }
 
-         //   Console.WriteLine(gps_line.type);
+           // Console.WriteLine(gps_line.type);
             return gps_line;
 
         }
